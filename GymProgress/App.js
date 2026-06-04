@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Text, View, TextInput, SafeAreaView, ScrollView, Button, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { styles } from './style/style_formulario';
 
 export default function App() { 
@@ -8,24 +9,17 @@ export default function App() {
     { id: 1, nombre: 'Press de Banca', peso: 60, repeticiones: 10, nuevo_objetivo_repeticiones: 12 }
   ]);
 
-  const agregarejercicios = (nuevoEjercicio) => {
-    setEjercicios([...ejercicios, nuevoEjercicio]);
+  // Esta función recibe el nuevo arreglo completo
+  const agregarejercicios = (nuevaListaDeEjercicios) => {
+    setEjercicios(nuevaListaDeEjercicios);
   };
 
-  const [nombre, setNombre] = useState('');
-  const [peso, setPeso] = useState('');
-  const [repeticiones, setRepeticiones] = useState('');
-  const [nuevo_objetivo_repeticiones, setNuevo_Objetivo_Repeticiones] = useState('');
-  
-  const id_fecha_actual = new Date().toLocaleDateString();
-
-  const boton_registrar = () => {
+  const boton_registrar = async () => {
     if (!nombre || !peso || !repeticiones || !nuevo_objetivo_repeticiones) {
       Alert.alert('Faltan datos', 'Por favor, completa todos los campos guerrer@.');
       return;
     }
     
-    // 1. Agregamos el "id" y nombramos correctamente la propiedad de la "fecha"
     const nuevalista = {
       id: new Date().getTime(),
       fecha: id_fecha_actual, 
@@ -34,23 +28,21 @@ export default function App() {
       repeticiones, 
       nuevo_objetivo_repeticiones
     };
+    //Funcion para juntar el nuevo ejercicio con los anteriores, creando un nuevo arreglo completo
+    const ejerciciosActualizados = [...ejercicios, nuevalista];
 
-    agregarejercicios(nuevalista);
+    agregarejercicios(ejerciciosActualizados);
     
-    // 2. Corregimos el error de dedo aquí:
+    //Guardamos en la memoria del teléfono
+    try {
+      const jsonstring = JSON.stringify(ejerciciosActualizados); 
+      await AsyncStorage.setItem('ejercicios', jsonstring); 
+    } catch (error) {
+      console.log('Hubo un error guardando en la memoria:', error);
+    }
+
     guardarEjercicio();
   };
-
-  function guardarEjercicio(){
-    console.log('Se guardó correctamente el ejercicio');
-    Alert.alert('¡Éxito!', '¡Ejercicio registrado con éxito!');
-    
-    setNombre('');
-    setPeso('');
-    setRepeticiones('');
-    setNuevo_Objetivo_Repeticiones('');
-  }
-
   return (
     <SafeAreaView style={{ flexGrow: 1, backgroundColor: '#fff' }}>
       <ScrollView contentContainerStyle={styles.contenedor}>
