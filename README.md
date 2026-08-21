@@ -24,7 +24,8 @@ Si deseas probar esta aplicación en tu entorno local, sigue estos pasos:
 
 1. **Clona este repositorio:**
 2. Instala las dependencias:
-Navega a la carpeta del proyecto y ejecuta: npm install
+Navega a la carpeta del proyecto y ejecuta: npm install.
+
 3.npx expo start --dev-client
 4.canea el código QR que aparece en la terminal con la aplicación de Expo Go en tu dispositivo móvil,
  o presiona a para abrirlo en un emulador de Android.
